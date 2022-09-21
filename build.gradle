@@ -1,0 +1,14 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.7.20-RC'
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.7.20-RC'
+
+    id 'net.mamoe.mirai-console' version '2.12.3'
+}
+
+group = 'world.thek'
+version = '0.1.0'
+
+repositories {
+    maven { url 'https://maven.aliyun.com/repository/public' }
+    mavenCentral()
+}
