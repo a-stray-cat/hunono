@@ -12,3 +12,9 @@ repositories {
     maven { url 'https://maven.aliyun.com/repository/public' }
     mavenCentral()
 }
+
+dependencies {
+    implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+//    implementation 'net.sf.json-lib:json-lib:2.4:jdk15'
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.12.1'
+}
