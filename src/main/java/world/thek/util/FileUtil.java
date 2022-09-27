@@ -1,6 +1,13 @@
 package world.thek.util;
 
+import net.mamoe.mirai.contact.Contact;
+import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.utils.ExternalResource;
+import world.thek.config.ConfigData;
+
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,9 +20,12 @@ public class FileUtil {
 
     //获取指令
     public static Map<String,String> read(String filename) throws IOException {
-        File file = new File(ConstantUtil.FOLDER_FILENAME+filename);
+        if (ConfigData.INSTANCE.getPath().isEmpty()) {
+            ConfigData.INSTANCE.setPath("/");
+        }
+        File file = new File(ConfigData.INSTANCE.getPath()+filename);
         if (file.exists()) {
-            BufferedReader in = new BufferedReader(new FileReader(ConstantUtil.FOLDER_FILENAME+filename));
+            BufferedReader in = new BufferedReader(new FileReader(ConfigData.INSTANCE.getPath()+filename));
             String str;
             while ((str = in.readLine()) != null) {
                 String[] split = str.split("\\s+");
@@ -27,11 +37,11 @@ public class FileUtil {
 
     //写入指令
     public static void write(String filename,String key,String value) throws IOException {
-        File folder = new File(ConstantUtil.FOLDER_FILENAME);
+        File folder = new File(ConfigData.INSTANCE.getPath());
         if (!folder.exists() && !folder.isDirectory()) {
             folder.mkdirs();
         }
-        File file = new File(ConstantUtil.FOLDER_FILENAME+filename);
+        File file = new File(ConfigData.INSTANCE.getPath()+filename);
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -39,7 +49,7 @@ public class FileUtil {
                 e.printStackTrace();
             }
         }
-        BufferedWriter out = new BufferedWriter(new FileWriter(ConstantUtil.FOLDER_FILENAME+filename,true));
+        BufferedWriter out = new BufferedWriter(new FileWriter(ConfigData.INSTANCE.getPath()+filename,true));
         out.write(key+" "+value+"\r");
         out.close();
     }
@@ -61,7 +71,7 @@ public class FileUtil {
         Map<String,String> newMap;
         orderMap.remove(key);
         newMap = orderMap;
-        BufferedWriter re = new BufferedWriter(new FileWriter(ConstantUtil.FOLDER_FILENAME+filename));
+        BufferedWriter re = new BufferedWriter(new FileWriter(ConfigData.INSTANCE.getPath()+filename));
         re.write("");
         for (Map.Entry<String,String> entry : newMap.entrySet()) {
             write(filename,entry.getKey(),entry.getValue());
@@ -70,10 +80,31 @@ public class FileUtil {
 
     //删除数据
     public static void delete(String filename) {
-        File file = new File(ConstantUtil.FOLDER_FILENAME+filename);
+        File file = new File(ConfigData.INSTANCE.getPath()+filename);
         if (file.exists()) {
             file.delete();
         }
         orderMap = new HashMap<>();
+    }
+
+    //上传图片
+    public static String uploadImage(String urlStr, int id, MessageEvent event) {
+        urlStr.replace("i.pximg.net", "i.acgmx.com");
+        URL url = null;
+        try {
+            url = new URL(urlStr);
+            URLConnection uc = url.openConnection();
+            InputStream inputStream = uc.getInputStream();
+            String ImageId = ExternalResource.uploadAsImage((ExternalResource) inputStream, (Contact) event).getImageId();
+//            FileOutputStream out = new FileOutputStream(ConfigData.INSTANCE.getPath()+"/images/"+id+".jpg");
+//            int data = 0;
+//            while ((data = inputStream.read()) != -1) {
+//                out.write(data);
+//            }
+//            inputStream.close();
+            return ImageId;
+        } catch (IOException e) {
+            return "";
+        }
     }
 }

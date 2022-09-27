@@ -92,8 +92,5 @@ public class OrderController extends SimpleListenerHost {
             FileUtil.delete(ConstantUtil.ORDER_FILENAME);
             event.getSubject().sendMessage("数据清除成功！");
         }
-
-        //test
-//        if ("test".equals())
     }
 }

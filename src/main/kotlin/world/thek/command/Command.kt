@@ -1,5 +1,6 @@
 package world.thek.command
 
+import io.ktor.http.cio.*
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import world.thek.Hunono
@@ -18,5 +19,11 @@ object Command: CompositeCommand(
     suspend fun CommandSender.setOwner(owner:Long) {
         ConfigData.owner = owner
         sendMessage("主人设置成功!")
+    }
+    @SubCommand("path")
+    @Description("设置文件路径")
+    suspend fun CommandSender.setPath(path:String) {
+        ConfigData.path = path
+        sendMessage("文件路径设置成功!")
     }
 }
