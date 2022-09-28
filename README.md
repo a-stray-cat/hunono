@@ -17,3 +17,12 @@
   |指令|功能|
   |-----|-----|
   |查看作品 作品ID | 发送该作品ID相关信息|
+
+<font color="#dd0000">第一次运行：</font>
+  先运行一次mcl，会在config目录下生成插件的目录
+  修改config.yml文件中的path和apiKey内容
+  
+### MCL命令
+  |指令|功能|
+  |-----|-----|
+  |/hn path 文件路径|修改config.yml文件中的path内容|
