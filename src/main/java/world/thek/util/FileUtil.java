@@ -1,8 +1,5 @@
 package world.thek.util;
 
-import net.mamoe.mirai.contact.Contact;
-import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.utils.ExternalResource;
 import world.thek.config.ConfigData;
 
 import java.io.*;
@@ -88,23 +85,35 @@ public class FileUtil {
     }
 
     //上传图片
-    public static String uploadImage(String urlStr, int id, MessageEvent event) {
-        urlStr.replace("i.pximg.net", "i.acgmx.com");
-        URL url = null;
-        try {
-            url = new URL(urlStr);
-            URLConnection uc = url.openConnection();
-            InputStream inputStream = uc.getInputStream();
-            String ImageId = ExternalResource.uploadAsImage((ExternalResource) inputStream, (Contact) event).getImageId();
-//            FileOutputStream out = new FileOutputStream(ConfigData.INSTANCE.getPath()+"/images/"+id+".jpg");
-//            int data = 0;
-//            while ((data = inputStream.read()) != -1) {
-//                out.write(data);
-//            }
-//            inputStream.close();
-            return ImageId;
-        } catch (IOException e) {
-            return "";
+    public static String uploadImage(String urlStr, int id) {
+
+        File folder = new File(ConfigData.INSTANCE.getPath()+"/images");
+        if (!folder.exists() && !folder.isDirectory()) {
+            folder.mkdirs();
         }
+
+        String jpgPath = ConfigData.INSTANCE.getPath() +"/images/" + id + ".jpg";
+
+        File file = new File(jpgPath);
+        if (!file.exists()) {
+            URL url = null;
+            try {
+                url = new URL(urlStr);
+                URLConnection uc = url.openConnection();
+                InputStream inputStream = uc.getInputStream();
+                byte[] bs = new byte[1024];
+                FileOutputStream out = new FileOutputStream(jpgPath);
+                int data = 0;
+                while ((data = inputStream.read(bs)) != -1) {
+                    out.write(bs,0,data);
+                }
+                out.close();
+                inputStream.close();
+            } catch (IOException e) {
+                return "";
+            }
+            return jpgPath;
+        }
+        return jpgPath;
     }
 }
