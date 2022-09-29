@@ -120,15 +120,19 @@ public class PixivUtil {
                 }
                 int j = 0;
                 for (int i = 0; i < list1.size(); i++) {
-                    int a = (int) list1.get(i);
-                    int b = (int) list2.get(i);
-                    String img = html.substring(a + 8, b - 3);
-                    int m = img.lastIndexOf("/")+1;
-                    String subId = img.substring(m, img.length() - 18);
-                    if (!authorMap.containsValue(subId)) {
-                        authorMap.put(String.valueOf(j), subId);
-                        j++;
-                    }
+                   try {
+                       int a = (int) list1.get(i);
+                       int b = (int) list2.get(i);
+                       String img = html.substring(a + 8, b - 3);
+                       int m = img.lastIndexOf("/")+1;
+                       String subId = img.substring(m, img.length() - 18);
+                       if (!authorMap.containsValue(subId)) {
+                           authorMap.put(String.valueOf(j), subId);
+                           j++;
+                       }
+                   } catch (IndexOutOfBoundsException e) {
+                       return authorMap;
+                   }
                 }
             } else {
                 return authorMap;
