@@ -85,14 +85,16 @@ public class FileUtil {
     }
 
     //上传图片
-    public static String uploadImage(String urlStr, int id) {
+    public static String uploadImage(String urlStr) {
 
         File folder = new File(ConfigData.INSTANCE.getPath()+"/images");
         if (!folder.exists() && !folder.isDirectory()) {
             folder.mkdirs();
         }
 
-        String jpgPath = ConfigData.INSTANCE.getPath() +"/images/" + id + ".jpg";
+        String imgId = urlStr.substring(urlStr.length()-27,urlStr.length()-15);
+
+        String jpgPath = ConfigData.INSTANCE.getPath() +"/images/" + imgId + ".jpg";
 
         File file = new File(jpgPath);
         if (!file.exists()) {
