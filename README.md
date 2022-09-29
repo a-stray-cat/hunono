@@ -27,3 +27,5 @@
   |指令|功能|
   |-----|-----|
   |/hn path 文件路径|修改config.yml文件中的path内容|
+  |/hn aFollow 作者ID |添加作者到关注列表|
+  |/hn dFollow 作者ID |删除关注列表中该作者|
