@@ -4,6 +4,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -72,15 +73,18 @@ public class PixivUtil {
                 } else {
                     index = (int) list1.get(0);
                     end = (int) list2.get(0);
-                    String img = html.substring(index + 8, end - 3);
-                    int m = img.lastIndexOf("/")+1;
+                    try {
+                        String img = html.substring(index + 8, end - 3);
+                        int m = img.lastIndexOf("/")+1;
 //                    int n = img.lastIndexOf("_p")+3;
-                    String subId = img.substring(m, img.length()-15);
-                    map.put("1",subId);
-                    String repUrl = img.replace("i.pximg.net/c/600x1200_90_webp", "i.acgmx.com/c/540x540_70");
-                    map.put(subId, repUrl);
+                        String subId = img.substring(m, img.length()-15);
+                        map.put("1",subId);
+                        String repUrl = img.replace("i.pximg.net/c/600x1200_90_webp", "i.acgmx.com/c/540x540_70");
+                        map.put(subId, repUrl);
+                    } catch (StringIndexOutOfBoundsException e) {
+                        return map;
+                    }
                 }
-
             }
         } catch (IOException e) {
             return map;
@@ -102,17 +106,25 @@ public class PixivUtil {
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 HttpEntity httpEntity = response.getEntity();
                 String html = EntityUtils.toString(httpEntity, "utf-8");
-                List list = new ArrayList<Integer>();
+                List list1 = new ArrayList<Integer>();
                 int index = html.indexOf("large");
                 while (index != -1) {
-                    list.add(index);
+                    list1.add(index);
                     index = html.indexOf("large", index + 1);
                 }
+                List list2 = new ArrayList<Integer>();
+                int end = html.indexOf("square_medium");
+                while (end != -1) {
+                    list2.add(end);
+                    end = html.indexOf("square_medium", end + 1);
+                }
                 int j = 0;
-                for (int i = 0; i < list.size(); i++) {
-                    int a = (int) list.get(i);
-                    String img = html.substring(a + 8, a + 109);
-                    String subId = img.substring(img.length() - 27, img.length() - 18);
+                for (int i = 0; i < list1.size(); i++) {
+                    int a = (int) list1.get(i);
+                    int b = (int) list2.get(i);
+                    String img = html.substring(a + 8, b - 3);
+                    int m = img.lastIndexOf("/")+1;
+                    String subId = img.substring(m, img.length() - 18);
                     if (!authorMap.containsValue(subId)) {
                         authorMap.put(String.valueOf(j), subId);
                         j++;
@@ -123,6 +135,10 @@ public class PixivUtil {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        if (authorMap.isEmpty()) {
+            HttpClientUtils.closeQuietly(response);
+            HttpClientUtils.closeQuietly(httpClient);
         }
         return authorMap;
     }

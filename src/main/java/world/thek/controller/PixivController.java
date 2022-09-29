@@ -128,8 +128,6 @@ public class PixivController extends SimpleListenerHost {
                     Image img = event.getSubject().uploadImage(ExternalResource.create(new File(localPath)).toAutoCloseable());
                     if (!"".equals(FileUtil.uploadImage(image))) {
                         MessageChain chain = new MessageChainBuilder()
-                                .append(new PlainText("画师作品："))
-                                .append("\n")
                                 .append(img)
                                 .append("标题：")
                                 .append(map.get("title"))
