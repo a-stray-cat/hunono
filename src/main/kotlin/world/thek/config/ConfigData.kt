@@ -3,6 +3,8 @@ package world.thek.config
 import net.mamoe.mirai.console.data.AutoSavePluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
+import net.mamoe.mirai.message.data.Message
+import net.mamoe.mirai.message.data.PlainText
 import java.io.File
 
 /**
@@ -28,5 +30,28 @@ object ConfigData: AutoSavePluginConfig("config") {
      */
     @ValueDescription("API密钥")
     var apiKey: String by value()
+
+    /**
+     * Pixiv关注列表
+     */
+    @ValueDescription("Pixiv关注列表")
+    var following: MutableList<Long> by value()
+
+    /**
+     * 关注列表操作
+     */
+        fun setFollowing(operate: Boolean, id: Long): Message {
+        return if (operate) {
+            following.add(id)
+            PlainText("添加成功!")
+        } else {
+            try {
+                following.remove(id)
+                PlainText("删除成功!")
+            } catch (e: Exception) {
+                PlainText("没有该作者!")
+            }
+        }
+    }
 
 }

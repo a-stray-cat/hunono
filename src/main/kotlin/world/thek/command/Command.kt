@@ -26,4 +26,18 @@ object Command: CompositeCommand(
         ConfigData.path = path
         sendMessage("文件路径设置成功!")
     }
+
+    @SubCommand("aFollow") // 可以设置多个子指令名。此时函数名会被忽略。
+    @Description("添加关注")
+    suspend fun CommandSender.addFollow(id :Long) {
+        val messageChain = ConfigData.setFollowing(true, id)
+        sendMessage(messageChain)
+    }
+
+    @SubCommand("dFollow") // 可以设置多个子指令名。此时函数名会被忽略。
+    @Description("删除关注")
+    suspend fun CommandSender.deleteFollow(id :Long) {
+        val messageChain = ConfigData.setFollowing(false, id)
+        sendMessage(messageChain)
+    }
 }
