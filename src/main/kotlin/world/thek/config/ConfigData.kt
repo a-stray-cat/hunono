@@ -54,4 +54,10 @@ object ConfigData: AutoSavePluginConfig("config") {
         }
     }
 
+    /**
+     * 配置随机瑟图是否为闪照
+     */
+    @ValueDescription("配置随机瑟图是否为闪照")
+    val isFlash:Boolean by value(true)
+
 }

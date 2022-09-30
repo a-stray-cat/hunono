@@ -13,6 +13,7 @@ import world.thek.util.PixivUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -20,7 +21,6 @@ import java.util.Random;
  * @date: 2022/9/27 下午3:02
  */
 public class PixivController extends SimpleListenerHost {
-
 
 
     @EventHandler
@@ -32,12 +32,12 @@ public class PixivController extends SimpleListenerHost {
         //根据ID查看作品
         if (Pixiv.PIXIV_FIND_IMAGE_ID.equals(pixiv)) {
             int id = Integer.parseInt(split[1]);
-            findById(id,event);
+            findById(id, event);
         }
         //获取画师作品
         if (Pixiv.PIXIV_FIND_AUTHOR_ID.equals(pixiv)) {
             int id = Integer.parseInt(split[1]);
-            HashMap<String,String> authorMap = PixivUtil.getIdByAuthor(id);
+            HashMap<String, String> authorMap = PixivUtil.getIdByAuthor(id);
             MessageChain chain = new MessageChainBuilder()
                     .append(new PlainText("该画师作品如下："))
                     .append("\n")
@@ -67,35 +67,53 @@ public class PixivController extends SimpleListenerHost {
 
         //随机瑟图
         if (Pixiv.PIXIV_RANDOM.equals(pixiv)) {
-            if (ConfigData.INSTANCE.getFollowing().size() != 0){
+            if (ConfigData.INSTANCE.getFollowing().size() != 0) {
                 Random ran = new Random();
                 int size = ConfigData.INSTANCE.getFollowing().size();
                 int index = ran.nextInt(size);
                 int id = ConfigData.INSTANCE.getFollowing().get(index).intValue();
-                HashMap<String,String> authorMap = PixivUtil.getIdByAuthor(id);
+                HashMap<String, String> authorMap = PixivUtil.getIdByAuthor(id);
                 int imgIndex = ran.nextInt(9);
                 if (authorMap.get(String.valueOf(imgIndex)) != null) {
                     int imfId = Integer.parseInt(authorMap.get(String.valueOf(imgIndex)));
-                    findById(imfId,event);
+                    findById(imfId, event);
                 } else {
-                    event.getSubject().sendMessage("图片获取失败！");
+                    event.getSubject().sendMessage("随机获取图片失败！");
                 }
 
             } else {
                 event.getSubject().sendMessage("关注列表为空！");
             }
         }
-    }
 
-    public void findById(int id,MessageEvent event) throws IOException, InterruptedException {
-        HashMap<String,String> map = PixivUtil.getImageById(id);
+        //查看关注列表
+        if (Pixiv.PIXIV_FOLLOWING.equals(pixiv)) {
+            List list = ConfigData.INSTANCE.getFollowing();
+
+        }
+
+        //添加关注
+        if (Pixiv.PIXIV_ADD_FOLLOWING.equals(pixiv)) {
+            int id = Integer.parseInt(split[1]);
+            HashMap<String, String> authorMap = PixivUtil.getIdByAuthor(id);
+            if (authorMap.get("0") == null) {
+                event.getSubject().sendMessage("无法获取该作者作品！");
+            } else {
+                ConfigData.INSTANCE.setFollowing(true,id);
+                event.getSubject().sendMessage("添加成功！");
+            }
+        }
+    }
+    //查看作品
+    public void findById(int id, MessageEvent event) throws IOException, InterruptedException {
+        HashMap<String, String> map = PixivUtil.getImageById(id);
         if (map.size() > 1) {
             if (map.size() > 4) {
-                HashMap<String,String> maps = new HashMap<>();
-                for (int i = 0; i < map.size()-3; i++) {
-                    String mid = id+"_p"+i;
+                HashMap<String, String> maps = new HashMap<>();
+                for (int i = 0; i < map.size() - 3; i++) {
+                    String mid = id + "_p" + i;
                     String localPath = FileUtil.uploadImage(map.get(mid));
-                    maps.put(String.valueOf(i),localPath);
+                    maps.put(String.valueOf(i), localPath);
                 }
 
                 MessageChain chain = new MessageChainBuilder()
@@ -112,21 +130,20 @@ public class PixivController extends SimpleListenerHost {
                 for (int i = 0; i < maps.size(); i++) {
                     Image img = event.getSubject().uploadImage(ExternalResource.create(new File(maps.get(String.valueOf(i)))).toAutoCloseable());
                     MessageChain chains = new MessageChainBuilder().append(img).build();
-                    synchronized(chains) {
+                    synchronized (chains) {
                         Random r = new Random();
-                        long time = r.nextInt(2000)+3000;
+                        long time = r.nextInt(2000) + 3000;
                         chains.wait(time);
                         event.getSubject().sendMessage(chains);
                     }
-
                 }
             } else {
-                String mid = id+"_p0";
+                String mid = id + "_p0";
                 String image = map.get(mid);
                 if (image != null) {
                     String localPath = FileUtil.uploadImage(image);
-                    Image img = event.getSubject().uploadImage(ExternalResource.create(new File(localPath)).toAutoCloseable());
-                    if (!"".equals(FileUtil.uploadImage(image))) {
+                    if (localPath != "") {
+                        Image img = event.getSubject().uploadImage(ExternalResource.create(new File(localPath)).toAutoCloseable());
                         MessageChain chain = new MessageChainBuilder()
                                 .append(img)
                                 .append("标题：")
@@ -138,9 +155,9 @@ public class PixivController extends SimpleListenerHost {
                                 .append("作品ID：")
                                 .append(String.valueOf(id))
                                 .build();
-                        synchronized(chain) {
+                        synchronized (chain) {
                             Random r = new Random();
-                            long time = r.nextInt(2000)+3000;
+                            long time = r.nextInt(2000) + 3000;
                             chain.wait(time);
                             event.getSubject().sendMessage(chain);
                         }
@@ -149,7 +166,7 @@ public class PixivController extends SimpleListenerHost {
                     }
                 } else {
                     MessageChain chain = new MessageChainBuilder()
-                            .append(new PlainText("图片获取失败！"))
+                            .append(new PlainText("mid获取图片失败！"))
                             .append("\n")
                             .append("mid:")
                             .append(mid)
@@ -160,7 +177,7 @@ public class PixivController extends SimpleListenerHost {
                 }
             }
         } else {
-            event.getSubject().sendMessage("图片获取失败！");
+            event.getSubject().sendMessage("API获取图片失败！");
         }
     }
 }
