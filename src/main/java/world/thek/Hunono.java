@@ -10,6 +10,9 @@ import world.thek.config.ConfigData;
 import world.thek.controller.OrderController;
 import world.thek.controller.PixivController;
 
+import java.io.File;
+import java.io.IOException;
+
 public final class Hunono extends JavaPlugin {
     public static final Hunono INSTANCE = new Hunono();
     public static final MiraiLogger log = INSTANCE.getLogger();
@@ -29,14 +32,17 @@ public final class Hunono extends JavaPlugin {
         log.info("指令模块已注册！");
         GlobalEventChannel.INSTANCE.registerListenerHost(new PixivController());
         log.info("Pixiv模块已注册！");
-//        this.resolveConfigFile("Config");
-//        this.resolveDataFile("Config");
         reloadPluginConfig(ConfigData.INSTANCE);
         getLogger().info("插件配置已加载！");
         if (ConfigData.INSTANCE.getPath().isEmpty()) {
-            getLogger().warning("文件路径还没有设置，请设置文件路径!");
-        } else {
-            log.info("文件路径已设置:" + ConfigData.INSTANCE.getPath());
+            File directory = new File("");
+            String path = null;
+            try {
+                path = directory.getCanonicalPath() + "\\config\\world.thek.hunono";
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            ConfigData.INSTANCE.setPath(path);
         }
         if (ConfigData.INSTANCE.getApiKey().isEmpty()) {
             getLogger().warning("API密钥还未配置，请配置API密钥！");

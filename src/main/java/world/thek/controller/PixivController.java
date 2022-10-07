@@ -1,10 +1,12 @@
 package world.thek.controller;
 
+import kotlin.coroutines.CoroutineContext;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.ExternalResource;
+import org.jetbrains.annotations.NotNull;
 import world.thek.config.ConfigData;
 import world.thek.entity.Pixiv;
 import world.thek.util.FileUtil;
@@ -22,7 +24,15 @@ import java.util.Random;
  */
 public class PixivController extends SimpleListenerHost {
 
-
+    @Override
+    public void handleException(@NotNull CoroutineContext context, @NotNull Throwable exception){
+        // 处理事件处理时抛出的异常
+        try {
+            throw new Exception(exception.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
     @EventHandler
     public void pixiv(MessageEvent event) throws IOException, InterruptedException {
         String code = event.getMessage().serializeToMiraiCode();
@@ -38,30 +48,11 @@ public class PixivController extends SimpleListenerHost {
         if (Pixiv.PIXIV_FIND_AUTHOR_ID.equals(pixiv)) {
             int id = Integer.parseInt(split[1]);
             HashMap<String, String> authorMap = PixivUtil.getIdByAuthor(id);
-            MessageChain chain = new MessageChainBuilder()
-                    .append(new PlainText("该画师作品如下："))
-                    .append("\n")
-                    .append(authorMap.get("0"))
-                    .append("\n")
-                    .append(authorMap.get("1"))
-                    .append("\n")
-                    .append(authorMap.get("2"))
-                    .append("\n")
-                    .append(authorMap.get("3"))
-                    .append("\n")
-                    .append(authorMap.get("4"))
-                    .append("\n")
-                    .append(authorMap.get("5"))
-                    .append("\n")
-                    .append(authorMap.get("6"))
-                    .append("\n")
-                    .append(authorMap.get("7"))
-                    .append("\n")
-                    .append(authorMap.get("8"))
-                    .append("\n")
-                    .append(authorMap.get("9"))
-                    .append("\n")
-                    .build();
+            MessageChainBuilder messages = new MessageChainBuilder();
+            for (int i = 0; i < authorMap.size(); i++) {
+                messages.append(authorMap.get(i));
+            }
+            MessageChain chain =  messages.build();
             event.getSubject().sendMessage(chain);
         }
 
@@ -89,7 +80,13 @@ public class PixivController extends SimpleListenerHost {
         //查看关注列表
         if (Pixiv.PIXIV_FOLLOWING.equals(pixiv)) {
             List list = ConfigData.INSTANCE.getFollowing();
-
+            MessageChainBuilder messages = new MessageChainBuilder();
+            for (Object o : list) {
+                messages.append(String.valueOf(o));
+                messages.append("\n");
+            }
+            MessageChain chain =  messages.build();
+            event.getSubject().sendMessage(chain);
         }
 
         //添加关注
@@ -100,7 +97,17 @@ public class PixivController extends SimpleListenerHost {
                 event.getSubject().sendMessage("无法获取该作者作品！");
             } else {
                 ConfigData.INSTANCE.setFollowing(true,id);
-                event.getSubject().sendMessage("添加成功！");
+                event.getSubject().sendMessage("已添加至关注列列表！");
+            }
+        }
+        //删除关注
+        if (Pixiv.PIXIV_DELETE_FOLLOWING.equals(pixiv)) {
+            long id = Integer.parseInt(split[1]);
+            if (ConfigData.INSTANCE.getFollowing().contains(id)) {
+                ConfigData.INSTANCE.setFollowing(false,id);
+                event.getSubject().sendMessage("已移出关注列列表！");
+            } else {
+                event.getSubject().sendMessage("列表不存在该ID！");
             }
         }
     }
@@ -142,7 +149,7 @@ public class PixivController extends SimpleListenerHost {
                 String image = map.get(mid);
                 if (image != null) {
                     String localPath = FileUtil.uploadImage(image);
-                    if (localPath != "") {
+                    if (!"".equals(localPath)) {
                         Image img = event.getSubject().uploadImage(ExternalResource.create(new File(localPath)).toAutoCloseable());
                         MessageChain chain = new MessageChainBuilder()
                                 .append(img)

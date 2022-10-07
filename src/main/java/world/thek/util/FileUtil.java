@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @Author: thek
@@ -17,9 +18,7 @@ public class FileUtil {
 
     //获取指令
     public static Map<String,String> read(String filename) throws IOException {
-        if (ConfigData.INSTANCE.getPath().isEmpty()) {
-            ConfigData.INSTANCE.setPath("/");
-        }
+
         File file = new File(ConfigData.INSTANCE.getPath()+filename);
         if (file.exists()) {
             BufferedReader in = new BufferedReader(new FileReader(ConfigData.INSTANCE.getPath()+filename));
@@ -86,6 +85,8 @@ public class FileUtil {
 
     //上传图片
     public static String uploadImage(String urlStr) {
+
+
 
         File folder = new File(ConfigData.INSTANCE.getPath()+"/images");
         if (!folder.exists() && !folder.isDirectory()) {
