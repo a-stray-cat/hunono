@@ -5,6 +5,7 @@ import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CompositeCommand
 import world.thek.Hunono
 import world.thek.config.ConfigData
+import world.thek.util.FileUtil
 
 /**
  *@author: thek
@@ -27,17 +28,28 @@ object Command: CompositeCommand(
         sendMessage("文件路径设置成功!")
     }
 
-    @SubCommand("aFollow") // 可以设置多个子指令名。此时函数名会被忽略。
+    @SubCommand("aFollow")
     @Description("添加关注")
     suspend fun CommandSender.addFollow(id :Long) {
         val messageChain = ConfigData.setFollowing(true, id)
         sendMessage(messageChain)
     }
 
-    @SubCommand("dFollow") // 可以设置多个子指令名。此时函数名会被忽略。
+    @SubCommand("dFollow")
     @Description("删除关注")
     suspend fun CommandSender.deleteFollow(id :Long) {
         val messageChain = ConfigData.setFollowing(false, id)
         sendMessage(messageChain)
+    }
+
+    @SubCommand("cleanCache")
+    @Description("清除图片缓存")
+    suspend fun CommandSender.deleteCache() {
+        val message = FileUtil.cleanCache( "/images")
+        if (message) {
+            sendMessage("清除成功")
+        } else {
+            sendMessage("清除失败")
+        }
     }
 }

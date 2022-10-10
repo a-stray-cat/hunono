@@ -7,7 +7,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @Author: thek
@@ -16,7 +15,9 @@ import java.util.Objects;
 public class FileUtil {
     static Map<String,String> orderMap = new HashMap<>();
 
-    //获取指令
+    /**
+     * 获取指令
+     */
     public static Map<String,String> read(String filename) throws IOException {
 
         File file = new File(ConfigData.INSTANCE.getPath()+filename);
@@ -31,7 +32,9 @@ public class FileUtil {
         return orderMap;
     }
 
-    //写入指令
+    /**
+     * 写入指令
+     */
     public static void write(String filename,String key,String value) throws IOException {
         File folder = new File(ConfigData.INSTANCE.getPath());
         if (!folder.exists() && !folder.isDirectory()) {
@@ -50,7 +53,9 @@ public class FileUtil {
         out.close();
     }
 
-    //封装所有指令
+    /**
+     * 封装所有指令
+     */
     public static String findALL(String filename) throws IOException {
         String allOrder = "";
         if (orderMap.isEmpty()) {
@@ -62,7 +67,9 @@ public class FileUtil {
         return allOrder;
     }
 
-    //删除指令
+    /**
+     * 删除指令
+     */
     public static void remove(String filename,String key) throws IOException {
         Map<String,String> newMap;
         orderMap.remove(key);
@@ -74,8 +81,10 @@ public class FileUtil {
         }
     }
 
-    //删除数据
-    public static void delete(String filename) {
+    /**
+     * 删除指令数据
+     */
+    public static void deleteOrder(String filename) {
         File file = new File(ConfigData.INSTANCE.getPath()+filename);
         if (file.exists()) {
             file.delete();
@@ -83,10 +92,25 @@ public class FileUtil {
         orderMap = new HashMap<>();
     }
 
-    //上传图片
+    /**
+     * 清除图片缓存
+     */
+    public static boolean cleanCache(String filename) {
+        File file = new File(ConfigData.INSTANCE.getPath()+filename);
+        if (file.exists()) {
+            file.delete();
+        }
+        if (file.exists()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * 上传图片
+     */
     public static String uploadImage(String urlStr) {
-
-
 
         File folder = new File(ConfigData.INSTANCE.getPath()+"/images");
         if (!folder.exists() && !folder.isDirectory()) {

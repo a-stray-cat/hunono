@@ -4,7 +4,6 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -24,7 +23,9 @@ public class PixivUtil {
     static CloseableHttpClient httpClient = HttpClients.createDefault();
     static CloseableHttpResponse response = null;
 
-    //根据作品ID获取图片
+    /**
+     * 根据作品ID获取图片
+     */
     public static HashMap<String, String> getImageById(int id) throws IOException {
         String url = "https://api.acgmx.com/illusts/detail?illustId=" + id + "&reduction=true";
         HashMap<String, String> map = new HashMap<>();
@@ -53,10 +54,10 @@ public class PixivUtil {
                 int titleIndex = html.indexOf("title") + 8;
                 int typeIndex = html.indexOf("type") - 3;
                 String title = html.substring(titleIndex, typeIndex);
-                int iindex = html.lastIndexOf("id")+4;
-                int iend = html.lastIndexOf("account")-2;
-                String userId = html.substring(iindex,iend);
-                map.put("id",userId);
+                int iindex = html.lastIndexOf("id") + 4;
+                int iend = html.lastIndexOf("account") - 2;
+                String userId = html.substring(iindex, iend);
+                map.put("id", userId);
                 map.put("title", title);
                 if (list1.size() > 1) {
                     for (int i = 1; i < list1.size(); i++) {
@@ -64,9 +65,9 @@ public class PixivUtil {
                         int b = (int) list2.get(i);
                         try {
                             String img = html.substring(a + 8, b - 3);
-                            int m = img.lastIndexOf("/")+1;
-                            String subId = img.substring(m, img.length()-15);
-                            map.put("1",subId);
+                            int m = img.lastIndexOf("/") + 1;
+                            String subId = img.substring(m, img.length() - 15);
+                            map.put("1", subId);
                             String repUrl = img.replace("i.pximg.net/c/600x1200_90_webp", "i.acgmx.com/c/540x540_70");
                             map.put(subId, repUrl);
                         } catch (StringIndexOutOfBoundsException e) {
@@ -78,9 +79,9 @@ public class PixivUtil {
                     end = (int) list2.get(0);
                     try {
                         String img = html.substring(index + 8, end - 3);
-                        int m = img.lastIndexOf("/")+1;
-                        String subId = img.substring(m, img.length()-15);
-                        map.put("1",subId);
+                        int m = img.lastIndexOf("/") + 1;
+                        String subId = img.substring(m, img.length() - 15);
+                        map.put("1", subId);
                         String repUrl = img.replace("i.pximg.net/c/600x1200_90_webp", "i.acgmx.com/c/540x540_70");
                         map.put(subId, repUrl);
                     } catch (StringIndexOutOfBoundsException e) {
@@ -94,7 +95,9 @@ public class PixivUtil {
         return map;
     }
 
-    //根据画师ID获取画师作品
+    /**
+     * 根据画师ID获取画师作品
+     */
     public static HashMap<String, String> getIdByAuthor(int id) {
         String url = "https://api.acgmx.com/public/search/users/illusts?id=" + id + "&offset=10";
         HashMap<String, String> authorMap = new HashMap<>();
@@ -122,29 +125,22 @@ public class PixivUtil {
                 }
                 int j = 0;
                 for (int i = 0; i < list1.size(); i++) {
-                   try {
-                       int a = (int) list1.get(i);
-                       int b = (int) list2.get(i);
-                       String img = html.substring(a + 8, b - 3);
-                       int m = img.lastIndexOf("/")+1;
-                       String subId = img.substring(m, img.length() - 18);
-                       if (!authorMap.containsValue(subId)) {
-                           authorMap.put(String.valueOf(j), subId);
-                           j++;
-                       }
-                   } catch (IndexOutOfBoundsException e) {
-                       return authorMap;
-                   }
+                    int a = (int) list1.get(i);
+                    int b = (int) list2.get(i);
+                    String img = html.substring(a + 8, b - 3);
+                    int m = img.lastIndexOf("/") + 1;
+                    int n = img.lastIndexOf("_p");
+                    String subId = img.substring(m, n);
+                    if (!authorMap.containsValue(subId)) {
+                        authorMap.put(String.valueOf(j), subId);
+                        j++;
+                    }
                 }
             } else {
                 return authorMap;
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-        if (authorMap.isEmpty()) {
-            HttpClientUtils.closeQuietly(response);
-            HttpClientUtils.closeQuietly(httpClient);
         }
         return authorMap;
     }

@@ -1,10 +1,8 @@
 package world.thek.controller;
 
-import kotlin.coroutines.CoroutineContext;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.MessageEvent;
-import org.jetbrains.annotations.NotNull;
 import world.thek.entity.Order;
 import world.thek.util.ConstantUtil;
 import world.thek.util.FileUtil;
@@ -92,7 +90,7 @@ public class OrderController extends SimpleListenerHost {
 
         //删除数据
         if (Order.ORDER_DELETE.equals(order)) {
-            FileUtil.delete(ConstantUtil.ORDER_FILENAME);
+            FileUtil.deleteOrder(ConstantUtil.ORDER_FILENAME);
             event.getSubject().sendMessage("数据清除成功！");
         }
     }

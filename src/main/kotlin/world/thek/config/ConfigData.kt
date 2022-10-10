@@ -29,7 +29,7 @@ object ConfigData: AutoSavePluginConfig("config") {
      * API密钥
      */
     @ValueDescription("API密钥")
-    var apiKey: String by value()
+    var apiKey: String by value(default = "可前往https://www.acgmx.com获取")
 
     /**
      * Pixiv关注列表
@@ -55,9 +55,9 @@ object ConfigData: AutoSavePluginConfig("config") {
     }
 
     /**
-     * 配置随机瑟图是否为闪照
+     * 配置随机图片是否为闪照
      */
-    @ValueDescription("配置随机瑟图是否为闪照")
+    @ValueDescription("配置随机图片是否为闪照")
     val isFlash:Boolean by value(true)
 
 }

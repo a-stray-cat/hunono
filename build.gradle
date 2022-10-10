@@ -16,6 +16,4 @@ repositories {
 dependencies {
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.12.1'
-//    implementation 'net.mamoe:mirai-core:2.12.3'
-//    runtimeOnly 'net.mamoe:mirai-logging-log4j2:2.12.3'
 }

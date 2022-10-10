@@ -4,7 +4,10 @@ import kotlin.coroutines.CoroutineContext;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.message.data.*;
+import net.mamoe.mirai.message.data.Image;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
+import net.mamoe.mirai.message.data.PlainText;
 import net.mamoe.mirai.utils.ExternalResource;
 import org.jetbrains.annotations.NotNull;
 import world.thek.config.ConfigData;
@@ -30,7 +33,7 @@ public class PixivController extends SimpleListenerHost {
         try {
             throw new Exception(exception.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage());
         }
     }
     @EventHandler
@@ -50,13 +53,14 @@ public class PixivController extends SimpleListenerHost {
             HashMap<String, String> authorMap = PixivUtil.getIdByAuthor(id);
             MessageChainBuilder messages = new MessageChainBuilder();
             for (int i = 0; i < authorMap.size(); i++) {
-                messages.append(authorMap.get(i));
+                messages.append(authorMap.get(String.valueOf(i)));
+                messages.append("\n");
             }
             MessageChain chain =  messages.build();
             event.getSubject().sendMessage(chain);
         }
 
-        //随机瑟图
+        //随机图片
         if (Pixiv.PIXIV_RANDOM.equals(pixiv)) {
             if (ConfigData.INSTANCE.getFollowing().size() != 0) {
                 Random ran = new Random();
@@ -64,14 +68,27 @@ public class PixivController extends SimpleListenerHost {
                 int index = ran.nextInt(size);
                 int id = ConfigData.INSTANCE.getFollowing().get(index).intValue();
                 HashMap<String, String> authorMap = PixivUtil.getIdByAuthor(id);
-                int imgIndex = ran.nextInt(9);
-                if (authorMap.get(String.valueOf(imgIndex)) != null) {
-                    int imfId = Integer.parseInt(authorMap.get(String.valueOf(imgIndex)));
-                    findById(imfId, event);
+                if (authorMap.size() > 1) {
+                    int imgIndex = ran.nextInt(authorMap.size());
+                    if (authorMap.get(String.valueOf(imgIndex)) != null) {
+                        int imfId = Integer.parseInt(authorMap.get(String.valueOf(imgIndex)));
+                        findById(imfId, event);
+                    } else {
+                        event.getSubject().sendMessage("随机获取图片失败！");
+                        event.getSubject().sendMessage(String.valueOf(imgIndex));
+                    }
                 } else {
-                    event.getSubject().sendMessage("随机获取图片失败！");
+                    MessageChain chain = new MessageChainBuilder()
+                            .append("随机异常信息如下：")
+                            .append("\n")
+                            .append("id:")
+                            .append(String.valueOf(id))
+                            .append("\n")
+                            .append("authorMapSize:")
+                            .append(String.valueOf(authorMap.size()))
+                            .build();
+                    event.getSubject().sendMessage(chain);
                 }
-
             } else {
                 event.getSubject().sendMessage("关注列表为空！");
             }
@@ -111,7 +128,10 @@ public class PixivController extends SimpleListenerHost {
             }
         }
     }
-    //查看作品
+
+    /**
+     * 查看作品方法
+     */
     public void findById(int id, MessageEvent event) throws IOException, InterruptedException {
         HashMap<String, String> map = PixivUtil.getImageById(id);
         if (map.size() > 1) {
@@ -122,7 +142,6 @@ public class PixivController extends SimpleListenerHost {
                     String localPath = FileUtil.uploadImage(map.get(mid));
                     maps.put(String.valueOf(i), localPath);
                 }
-
                 MessageChain chain = new MessageChainBuilder()
                         .append("标题：")
                         .append(map.get("title"))
@@ -170,6 +189,7 @@ public class PixivController extends SimpleListenerHost {
                         }
                     } else {
                         event.getSubject().sendMessage("图片上传失败！");
+                        event.getSubject().sendMessage(image);
                     }
                 } else {
                     MessageChain chain = new MessageChainBuilder()
