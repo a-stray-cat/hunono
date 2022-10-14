@@ -63,33 +63,25 @@ public class PixivUtil {
                     for (int i = 1; i < list1.size(); i++) {
                         int a = (int) list1.get(i);
                         int b = (int) list2.get(i);
-                        try {
-                            String img = html.substring(a + 8, b - 3);
-                            int m = img.lastIndexOf("/") + 1;
-                            String subId = img.substring(m, img.length() - 15);
-                            map.put("1", subId);
-                            String repUrl = img.replace("i.pximg.net/c/600x1200_90_webp", "i.acgmx.com/c/540x540_70");
-                            map.put(subId, repUrl);
-                        } catch (StringIndexOutOfBoundsException e) {
-                            return map;
-                        }
-                    }
-                } else {
-                    index = (int) list1.get(0);
-                    end = (int) list2.get(0);
-                    try {
-                        String img = html.substring(index + 8, end - 3);
+                        String img = html.substring(a + 8, b - 3);
                         int m = img.lastIndexOf("/") + 1;
                         String subId = img.substring(m, img.length() - 15);
                         map.put("1", subId);
                         String repUrl = img.replace("i.pximg.net/c/600x1200_90_webp", "i.acgmx.com/c/540x540_70");
                         map.put(subId, repUrl);
-                    } catch (StringIndexOutOfBoundsException e) {
-                        return map;
                     }
+                } else {
+                    index = (int) list1.get(0);
+                    end = (int) list2.get(0);
+                    String img = html.substring(index + 8, end - 3);
+                    int m = img.lastIndexOf("/") + 1;
+                    String subId = img.substring(m, img.length() - 15);
+                    map.put("1", subId);
+                    String repUrl = img.replace("i.pximg.net/c/600x1200_90_webp", "i.acgmx.com/c/540x540_70");
+                    map.put(subId, repUrl);
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
             return map;
         }
         return map;
@@ -139,8 +131,8 @@ public class PixivUtil {
             } else {
                 return authorMap;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            return authorMap;
         }
         return authorMap;
     }
