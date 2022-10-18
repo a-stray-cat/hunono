@@ -4,6 +4,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -129,9 +130,11 @@ public class PixivUtil {
                     }
                 }
             } else {
+                HttpClientUtils.closeQuietly(response);
                 return authorMap;
             }
         } catch (Exception e) {
+            HttpClientUtils.closeQuietly(response);
             return authorMap;
         }
         return authorMap;
