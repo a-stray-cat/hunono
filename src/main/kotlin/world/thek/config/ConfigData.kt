@@ -60,4 +60,9 @@ object ConfigData: AutoSavePluginConfig("config") {
     @ValueDescription("配置随机图片是否为闪照")
     val isFlash:Boolean by value(true)
 
+    /**
+     * 随机图片命令
+     */
+    @ValueDescription("随机图片命令")
+    var randomOrder: String by value(default = "来点")
 }
