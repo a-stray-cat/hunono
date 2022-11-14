@@ -18,7 +18,7 @@ public final class Hunono extends JavaPlugin {
     public static final MiraiLogger log = INSTANCE.getLogger();
 
     private Hunono() {
-        super(new JvmPluginDescriptionBuilder("world.thek.hunono", "0.1.0")
+        super(new JvmPluginDescriptionBuilder("world.thek.hunono", "0.1.1")
                 .name("Hunono")
                 .author("thek")
                 .build());
