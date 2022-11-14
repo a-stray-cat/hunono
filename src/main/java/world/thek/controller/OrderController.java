@@ -3,13 +3,14 @@ package world.thek.controller;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.MessageEvent;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 import world.thek.entity.Order;
 import world.thek.util.ConstantUtil;
 import world.thek.util.FileUtil;
 
 import java.io.IOException;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author thek
@@ -69,12 +70,9 @@ public class OrderController extends SimpleListenerHost {
 
         //所有指令
         if(Order.ORDER_ALL.equals(order)) {
-            String all = FileUtil.findALL(ConstantUtil.ORDER_FILENAME);
-            if (!Objects.equals(all, "")) {
-                event.getSubject().sendMessage(all);
-            } else {
-                event.getSubject().sendMessage("暂无指令");
-            }
+            MessageChainBuilder messages = FileUtil.findALL(ConstantUtil.ORDER_FILENAME);
+            MessageChain chain =  messages.build();
+            event.getSubject().sendMessage(chain);
         }
 
         //删除指令

@@ -1,5 +1,6 @@
 package world.thek.util;
 
+import net.mamoe.mirai.message.data.MessageChainBuilder;
 import world.thek.config.ConfigData;
 
 import java.io.*;
@@ -56,15 +57,21 @@ public class FileUtil {
     /**
      * 封装所有指令
      */
-    public static String findALL(String filename) throws IOException {
-        String allOrder = "";
+    public static MessageChainBuilder findALL(String filename) throws IOException {
         if (orderMap.isEmpty()) {
             read(filename);
         }
+        MessageChainBuilder messages = new MessageChainBuilder();
         for (Map.Entry<String,String> entry : orderMap.entrySet()) {
-            allOrder = allOrder + entry.getKey() + entry.getValue();
+            messages.append(entry.getKey());
+            messages.append("->");
+            messages.append(entry.getValue());
+            messages.append("\n");
         }
-        return allOrder;
+        int size = orderMap.size();
+        messages.append("指令总数：");
+        messages.append(String.valueOf(size));
+        return messages;
     }
 
     /**
