@@ -13,4 +13,5 @@ public class Pixiv {
     public static final String PIXIV_FOLLOWING = "关注列表";
     public static final String PIXIV_ADD_FOLLOWING = "添加关注";
     public static final String PIXIV_DELETE_FOLLOWING = "移除关注";
+    public static final String PIXIV_SEARCH = "搜索";
 }

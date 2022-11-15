@@ -1,5 +1,8 @@
 package world.thek.util;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONArray;
+import com.alibaba.fastjson2.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -14,6 +17,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author: thek
@@ -138,5 +142,39 @@ public class PixivUtil {
             return authorMap;
         }
         return authorMap;
+    }
+
+    /**
+     * 搜索功能
+     */
+    public static HashMap<String, String> searchImage(String value) throws IOException {
+        String url = "https://api.acgmx.com/public/search?q=" + value + "&offset=10";
+        HashMap<String, String> idMap = new HashMap<>();
+        HttpGet request = new HttpGet(url);
+        request.setHeader(
+                "User-Agent",
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.60 Safari/537.36");
+        request.setHeader("token", token);
+        try {
+            response = httpClient.execute(request);
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                HttpEntity httpEntity = response.getEntity();
+                String html = EntityUtils.toString(httpEntity, "utf-8");
+                JSONObject jsonObject = JSON.parseObject(html);
+                JSONArray arrayList = JSON.parseArray(String.valueOf(jsonObject.get("illusts")));
+                Random r = new Random();
+                int indexArray = r.nextInt(arrayList.size());
+                String valueString = JSON.toJSONString(arrayList.get(indexArray));
+                int index = valueString.lastIndexOf("width");
+                idMap.put("index", String.valueOf(index));
+                int end = valueString.lastIndexOf("create_date");
+                idMap.put("end", String.valueOf(end));
+                String subId = valueString.substring(index + 16, end - 2);
+                idMap.put("subId",subId);
+            }
+        } catch (Exception e) {
+            return idMap;
+        }
+        return idMap;
     }
 }
