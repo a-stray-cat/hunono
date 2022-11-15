@@ -62,7 +62,7 @@ public class PixivController extends SimpleListenerHost {
                 HashMap<String, String> authorMap = PixivUtil.getIdByAuthor(id);
                 if (authorMap.size() == 0) {
                     //出现网络问题时可能获取失败
-                    event.getSubject().sendMessage("获取失败，尝试再次获取！");
+                    event.getSubject().sendMessage("网络波动，尝试再次获取！");
                     authorMap = PixivUtil.getIdByAuthor(id);
                 }
                 if (authorMap.size() > 0) {
