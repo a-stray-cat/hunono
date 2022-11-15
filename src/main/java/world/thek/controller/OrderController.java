@@ -28,6 +28,11 @@ public class OrderController extends SimpleListenerHost {
 
         Map<String,String> orderMap = FileUtil.read(ConstantUtil.ORDER_FILENAME);
 
+        if (orderMap.get(order) != null) {
+            String value = orderMap.get(order);
+            event.getSubject().sendMessage(value);
+        }
+
         //添加指令
         if (Order.ORDER_ADD.equals(order)) {
             if (userId == ConfigData.INSTANCE.getOwner()) {
