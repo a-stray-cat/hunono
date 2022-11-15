@@ -20,7 +20,7 @@ object ConfigData: AutoSavePluginConfig("config") {
     var owner: Long by value()
 
     /**
-     * 当前插件路径
+     * 文件存储路径
      */
     @ValueDescription("文件存储路径")
     var path: String by value()
@@ -55,14 +55,14 @@ object ConfigData: AutoSavePluginConfig("config") {
     }
 
     /**
-     * 配置随机图片是否为闪照
-     */
-    @ValueDescription("配置随机图片是否为闪照")
-    val isFlash:Boolean by value(true)
-
-    /**
      * 随机图片命令
      */
     @ValueDescription("随机图片命令")
     var randomOrder: String by value(default = "来点")
+
+    /**
+     * 配置随机图片是否撤回
+     */
+    @ValueDescription("配置随机图片是否撤回(默认为10秒撤回)")
+    var isRecallIn: Boolean by value(true)
 }

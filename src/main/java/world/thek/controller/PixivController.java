@@ -3,10 +3,8 @@ package world.thek.controller;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.MessageEvent;
-import net.mamoe.mirai.message.data.Image;
-import net.mamoe.mirai.message.data.MessageChain;
-import net.mamoe.mirai.message.data.MessageChainBuilder;
-import net.mamoe.mirai.message.data.PlainText;
+import net.mamoe.mirai.message.MessageReceipt;
+import net.mamoe.mirai.message.data.*;
 import net.mamoe.mirai.utils.ExternalResource;
 import world.thek.config.ConfigData;
 import world.thek.entity.Pixiv;
@@ -162,7 +160,10 @@ public class PixivController extends SimpleListenerHost {
                         Random r = new Random();
                         long time = r.nextInt(2000) + 3000;
                         chains.wait(time);
-                        event.getSubject().sendMessage(chains);
+                        MessageReceipt messageReceipt = event.getSubject().sendMessage(chains);
+                        if (ConfigData.INSTANCE.isRecallIn()) {
+                            messageReceipt.recallIn(10000);
+                        }
                     }
                 }
             } else {
@@ -187,7 +188,10 @@ public class PixivController extends SimpleListenerHost {
                             Random r = new Random();
                             long time = r.nextInt(2000) + 3000;
                             chain.wait(time);
-                            event.getSubject().sendMessage(chain);
+                            MessageReceipt messageReceipt = event.getSubject().sendMessage(chain);
+                            if (ConfigData.INSTANCE.isRecallIn()) {
+                                messageReceipt.recallIn(10000);
+                            }
                         }
                     } else {
                         event.getSubject().sendMessage("图片上传失败！");
