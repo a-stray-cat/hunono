@@ -1,8 +1,8 @@
 package world.thek.util;
 
-import com.alibaba.fastjson2.JSON;
-import com.alibaba.fastjson2.JSONArray;
-import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -147,9 +147,9 @@ public class PixivUtil {
     /**
      * 搜索功能
      */
-    public static HashMap<String, String> searchImage(String value) throws IOException {
+    public static String searchImage(String value) throws IOException {
         String url = "https://api.acgmx.com/public/search?q=" + value + "&offset=10";
-        HashMap<String, String> idMap = new HashMap<>();
+        String subId = String.valueOf(0);
         HttpGet request = new HttpGet(url);
         request.setHeader(
                 "User-Agent",
@@ -165,16 +165,16 @@ public class PixivUtil {
                 Random r = new Random();
                 int indexArray = r.nextInt(arrayList.size());
                 String valueString = JSON.toJSONString(arrayList.get(indexArray));
-                int index = valueString.lastIndexOf("width");
-                idMap.put("index", String.valueOf(index));
-                int end = valueString.lastIndexOf("create_date");
-                idMap.put("end", String.valueOf(end));
-                String subId = valueString.substring(index + 16, end - 2);
-                idMap.put("subId",subId);
+                int index = valueString.indexOf("large");
+                int end = valueString.indexOf("square_medium");
+                String substringUrl = valueString.substring(index+8, end-3);
+                int subIndex = substringUrl.lastIndexOf("/");
+                int subEnd =  substringUrl.indexOf("_p0");
+                subId = substringUrl.substring(subIndex + 1,subEnd);
             }
         } catch (Exception e) {
-            return idMap;
+            return subId;
         }
-        return idMap;
+        return subId;
     }
 }

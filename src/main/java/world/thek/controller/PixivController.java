@@ -128,37 +128,20 @@ public class PixivController extends SimpleListenerHost {
         //搜索
         if (Pixiv.PIXIV_SEARCH.equals(pixiv)) {
             String value = split[1];
-            String id = PixivUtil.searchImage(value).get("subId");
-            String index = PixivUtil.searchImage(value).get("index");
-            String end = PixivUtil.searchImage(value).get("end");
-            MessageChainBuilder messages = new MessageChainBuilder();
-            messages.append(id);
-            messages.append("\n");
-            messages.append(index);
-            messages.append("\n");
-            messages.append(end);
-            MessageChain chain =  messages.build();
-            event.getSubject().sendMessage(chain);
-
-//            if (id != null) {
-//                id = PixivUtil.searchImage(value).get("subId");
-//                if (id != null) {
-//                    MessageChainBuilder messages = new MessageChainBuilder();
-//                    messages.append("搜索结果为空！");
-//                    messages.append("\n");
-//                    messages.append("搜索内容为：");
-//                    messages.append(value);
-//                    messages.append("\n");
-//                    messages.append("Id为：");
-//                    messages.append(id);
-//                    MessageChain chain =  messages.build();
-//                    event.getSubject().sendMessage(chain);
-//                } else {
-//                    findById(Integer.parseInt(id),event);
-//                }
-//            } else {
-//                findById(Integer.parseInt(id),event);
-//            }
+            int subId = Integer.parseInt(PixivUtil.searchImage(value));
+            if (subId > 0) {
+                findById(subId,event);
+            } else {
+                event.getSubject().sendMessage("搜索结果为空，请尝试重新搜索");
+            }
+//            MessageChainBuilder messages = new MessageChainBuilder();
+//            messages.append(id);
+//            messages.append("\n");
+//            messages.append(index);
+//            messages.append("\n");
+//            messages.append(end);
+//            MessageChain chain =  messages.build();
+//            event.getSubject().sendMessage(chain);
         }
     }
 
