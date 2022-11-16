@@ -178,7 +178,11 @@ public class PixivController extends SimpleListenerHost {
             if (subId > 0) {
                 findById(subId,event);
             } else {
-                event.getSubject().sendMessage("搜索结果为空，请尝试重新搜索");
+                if (ConfigData.INSTANCE.getApiKey().isEmpty()) {
+                    event.getSubject().sendMessage("未配置API密钥，无法使用此功能！");
+                } else {
+                    event.getSubject().sendMessage("搜索结果为空，请尝试重新搜索");
+                }
             }
         }
     }
