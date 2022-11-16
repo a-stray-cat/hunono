@@ -24,9 +24,55 @@ import java.util.Random;
 public class PixivController extends SimpleListenerHost {
     @EventHandler
     public void pixiv(MessageEvent event) throws IOException, InterruptedException {
+        long userId = event.getSender().getId();
         String code = event.getMessage().serializeToMiraiCode();
         String[] split = code.split("\\s+");
         String pixiv = split[0];
+
+        //开启、关闭撤回
+        if (Pixiv.PIXIV_OPEN.equals(pixiv)) {
+            if (userId == ConfigData.INSTANCE.getOwner()) {
+                ConfigData.INSTANCE.setRecallIn(true);
+                MessageChainBuilder messages = new MessageChainBuilder();
+                messages.append("当前撤回状态：");
+                if (ConfigData.INSTANCE.isRecallIn()) {
+                    messages.append("已开启");
+                } else {
+                    messages.append("已关闭");
+                }
+                MessageChain chain =  messages.build();
+                event.getSubject().sendMessage(chain);
+            } else {
+                MessageChainBuilder messages = new MessageChainBuilder();
+                messages.append("当前用户ID为：");
+                messages.append(String.valueOf(userId));
+                messages.append("\n");
+                messages.append("请联系管理员!");
+                MessageChain chain =  messages.build();
+                event.getSubject().sendMessage(chain);
+            }
+        } else if (Pixiv.PIXIV_CLOSE.equals(pixiv)) {
+            if (userId == ConfigData.INSTANCE.getOwner()) {
+                ConfigData.INSTANCE.setRecallIn(false);
+                MessageChainBuilder messages = new MessageChainBuilder();
+                messages.append("当前撤回状态：");
+                if (ConfigData.INSTANCE.isRecallIn()) {
+                    messages.append("已开启");
+                } else {
+                    messages.append("已关闭");
+                }
+                MessageChain chain =  messages.build();
+                event.getSubject().sendMessage(chain);
+            } else {
+                MessageChainBuilder messages = new MessageChainBuilder();
+                messages.append("当前用户ID为：");
+                messages.append(String.valueOf(userId));
+                messages.append("\n");
+                messages.append("请联系管理员!");
+                MessageChain chain =  messages.build();
+                event.getSubject().sendMessage(chain);
+            }
+        }
 
         //根据ID查看作品
         if (Pixiv.PIXIV_FIND_IMAGE_ID.equals(pixiv)) {
@@ -134,14 +180,6 @@ public class PixivController extends SimpleListenerHost {
             } else {
                 event.getSubject().sendMessage("搜索结果为空，请尝试重新搜索");
             }
-//            MessageChainBuilder messages = new MessageChainBuilder();
-//            messages.append(id);
-//            messages.append("\n");
-//            messages.append(index);
-//            messages.append("\n");
-//            messages.append(end);
-//            MessageChain chain =  messages.build();
-//            event.getSubject().sendMessage(chain);
         }
     }
 

@@ -28,6 +28,7 @@ public class OrderController extends SimpleListenerHost {
 
         Map<String,String> orderMap = FileUtil.read(ConstantUtil.ORDER_FILENAME);
 
+        //关键词触发
         if (orderMap.get(order) != null) {
             String value = orderMap.get(order);
             event.getSubject().sendMessage(value);
