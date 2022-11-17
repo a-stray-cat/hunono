@@ -7,6 +7,7 @@ import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.utils.MiraiLogger;
 import world.thek.command.Command;
 import world.thek.config.ConfigData;
+import world.thek.controller.EpicController;
 import world.thek.controller.OrderController;
 import world.thek.controller.PixivController;
 
@@ -32,6 +33,8 @@ public final class Hunono extends JavaPlugin {
         log.info("指令模块已注册！");
         GlobalEventChannel.INSTANCE.registerListenerHost(new PixivController());
         log.info("Pixiv模块已注册！");
+        GlobalEventChannel.INSTANCE.registerListenerHost(new EpicController());
+        log.info("Epic模块已注册！");
         reloadPluginConfig(ConfigData.INSTANCE);
         getLogger().info("插件配置已加载！");
         if (ConfigData.INSTANCE.getPath().isEmpty()) {
@@ -46,6 +49,9 @@ public final class Hunono extends JavaPlugin {
         }
         if (ConfigData.INSTANCE.getApiKey().isEmpty()) {
             getLogger().warning("API密钥还未配置，请配置API密钥！");
+        }
+        if (ConfigData.INSTANCE.getMaxSize() == 0) {
+            ConfigData.INSTANCE.setMaxSize(5);
         }
         CommandManager.INSTANCE.registerCommand(Command.INSTANCE, true);
         log.info("插件指令已加载！");

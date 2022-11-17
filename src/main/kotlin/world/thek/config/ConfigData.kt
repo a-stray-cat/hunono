@@ -65,4 +65,11 @@ object ConfigData: AutoSavePluginConfig("config") {
      */
     @ValueDescription("配置随机图片是否撤回(默认为10秒撤回)")
     var isRecallIn: Boolean by value(true)
+
+    /**
+     * 单次消息最大图片数
+     */
+    @ValueDescription("默认为5")
+    var maxSize: Long by value();
+
 }

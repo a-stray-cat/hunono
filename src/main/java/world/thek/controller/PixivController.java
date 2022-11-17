@@ -214,7 +214,11 @@ public class PixivController extends SimpleListenerHost {
                         .append(String.valueOf(maps.size()))
                         .build();
                 event.getSubject().sendMessage(chain);
-                for (int i = 0; i < maps.size(); i++) {
+                int size = maps.size();
+                if (maps.size() > ConfigData.INSTANCE.getMaxSize()) {
+                    size = (int) ConfigData.INSTANCE.getMaxSize();
+                }
+                for (int i = 0; i < size; i++) {
                     Image img = event.getSubject().uploadImage(ExternalResource.create(new File(maps.get(String.valueOf(i)))).toAutoCloseable());
                     MessageChain chains = new MessageChainBuilder().append(img).build();
                     synchronized (chains) {
