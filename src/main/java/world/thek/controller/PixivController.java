@@ -52,7 +52,7 @@ public class PixivController extends SimpleListenerHost {
                 event.getSubject().sendMessage(chain);
             }
         } else if (Pixiv.PIXIV_CLOSE.equals(pixiv)) {
-            if (userId == ConfigData.INSTANCE.getOwner()) {
+            if (userId == ConfigData.INSTANCE.getOwner() || ConfigData.INSTANCE.getOwner() == 0) {
                 ConfigData.INSTANCE.setRecallIn(false);
                 MessageChainBuilder messages = new MessageChainBuilder();
                 messages.append("当前撤回状态：");
