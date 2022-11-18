@@ -47,7 +47,7 @@ public final class Hunono extends JavaPlugin {
             }
             ConfigData.INSTANCE.setPath(path);
         }
-        if (ConfigData.INSTANCE.getApiKey().isEmpty()) {
+        if (ConfigData.INSTANCE.getApiKey() == "可前往https://www.acgmx.com获取") {
             getLogger().warning("API密钥还未配置，请配置API密钥！");
         }
         if (ConfigData.INSTANCE.getMaxSize() == 0) {
