@@ -31,7 +31,7 @@ public class PixivController extends SimpleListenerHost {
 
         //开启、关闭撤回
         if (Pixiv.PIXIV_OPEN.equals(pixiv)) {
-            if (userId == ConfigData.INSTANCE.getOwner()) {
+            if (userId == ConfigData.INSTANCE.getOwner() || ConfigData.INSTANCE.getOwner() == 0) {
                 ConfigData.INSTANCE.setRecallIn(true);
                 MessageChainBuilder messages = new MessageChainBuilder();
                 messages.append("当前撤回状态：");
