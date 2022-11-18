@@ -23,13 +23,15 @@ public class EpicController  extends SimpleListenerHost {
         String order = split[0];
 
         if (Epic.EPIC_FREE.equals(order)) {
-            MessageChainBuilder messages = new MessageChainBuilder();
             Map<String,Epic> map = EpicUtil.getEpicFreeMap();
             if (map.size() > 0) {
                 for (int i = 0; i < map.size(); i++) {
                     Epic epic = map.get(String.valueOf(i));
+                    MessageChainBuilder messages = new MessageChainBuilder();
+                    messages.append("游戏名：");
                     messages.append(epic.getTitle());
                     messages.append("\n");
+                    messages.append("说明: ");
                     messages.append(epic.getDes());
                     messages.append("\n");
                     messages.append("截止时间：");
