@@ -11,13 +11,24 @@ public class Epic {
     String des;
     String date;
 
-    public Epic(String title, String des, String date) {
+    String imgUrl;
+
+    public Epic(String title, String des, String date, String imgUrl) {
         this.title = title;
         this.des = des;
         this.date = date;
+        this.imgUrl = imgUrl;
     }
 
     public Epic() {
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
     }
 
     public String getTitle() {
@@ -50,6 +61,7 @@ public class Epic {
                 "title='" + title + '\'' +
                 ", des='" + des + '\'' +
                 ", date='" + date + '\'' +
+                ", imgUrl='" + imgUrl + '\'' +
                 '}';
     }
 }

@@ -40,7 +40,7 @@ public class PixivController extends SimpleListenerHost {
                 } else {
                     messages.append("已关闭");
                 }
-                MessageChain chain =  messages.build();
+                MessageChain chain = messages.build();
                 event.getSubject().sendMessage(chain);
             } else {
                 MessageChainBuilder messages = new MessageChainBuilder();
@@ -48,7 +48,7 @@ public class PixivController extends SimpleListenerHost {
                 messages.append(String.valueOf(userId));
                 messages.append("\n");
                 messages.append("请联系管理员!");
-                MessageChain chain =  messages.build();
+                MessageChain chain = messages.build();
                 event.getSubject().sendMessage(chain);
             }
         } else if (Pixiv.PIXIV_CLOSE.equals(pixiv)) {
@@ -61,7 +61,7 @@ public class PixivController extends SimpleListenerHost {
                 } else {
                     messages.append("已关闭");
                 }
-                MessageChain chain =  messages.build();
+                MessageChain chain = messages.build();
                 event.getSubject().sendMessage(chain);
             } else {
                 MessageChainBuilder messages = new MessageChainBuilder();
@@ -69,7 +69,7 @@ public class PixivController extends SimpleListenerHost {
                 messages.append(String.valueOf(userId));
                 messages.append("\n");
                 messages.append("请联系管理员!");
-                MessageChain chain =  messages.build();
+                MessageChain chain = messages.build();
                 event.getSubject().sendMessage(chain);
             }
         }
@@ -92,7 +92,7 @@ public class PixivController extends SimpleListenerHost {
             } else {
                 messages.append("作品获取失败！");
             }
-            MessageChain chain =  messages.build();
+            MessageChain chain = messages.build();
             event.getSubject().sendMessage(chain);
         }
 
@@ -145,7 +145,7 @@ public class PixivController extends SimpleListenerHost {
             }
             messages.append("关注总数：");
             messages.append(String.valueOf(list.size()));
-            MessageChain chain =  messages.build();
+            MessageChain chain = messages.build();
             event.getSubject().sendMessage(chain);
         }
 
@@ -156,7 +156,7 @@ public class PixivController extends SimpleListenerHost {
             if (authorMap.get("0") == null) {
                 event.getSubject().sendMessage("无法获取该作者作品！");
             } else {
-                ConfigData.INSTANCE.setFollowing(true,id);
+                ConfigData.INSTANCE.setFollowing(true, id);
                 event.getSubject().sendMessage("已添加至关注列列表！");
             }
         }
@@ -164,7 +164,7 @@ public class PixivController extends SimpleListenerHost {
         if (Pixiv.PIXIV_DELETE_FOLLOWING.equals(pixiv)) {
             long id = Integer.parseInt(split[1]);
             if (ConfigData.INSTANCE.getFollowing().contains(id)) {
-                ConfigData.INSTANCE.setFollowing(false,id);
+                ConfigData.INSTANCE.setFollowing(false, id);
                 event.getSubject().sendMessage("已移出关注列列表！");
             } else {
                 event.getSubject().sendMessage("列表不存在该ID！");
@@ -176,7 +176,7 @@ public class PixivController extends SimpleListenerHost {
             String value = split[1];
             int subId = Integer.parseInt(PixivUtil.searchImage(value));
             if (subId > 0) {
-                findById(subId,event);
+                findById(subId, event);
             } else {
                 if (ConfigData.INSTANCE.getApiKey() == "可前往https://www.acgmx.com获取") {
                     event.getSubject().sendMessage("未配置API密钥，无法使用此功能！");

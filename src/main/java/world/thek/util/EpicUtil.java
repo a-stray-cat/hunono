@@ -12,17 +12,21 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import world.thek.entity.Epic;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author: thek
  * @date: 2022/11/17 下午4:22
  */
 public class EpicUtil {
-    static Map<String,Epic> epicMap = new HashMap<>();
+    static Map<String, Epic> epicMap = new HashMap<>();
 
-    public static Map<String,Epic> getEpicFreeMap() {
+    public static Map<String, Epic> getEpicFreeMap() {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         CloseableHttpResponse response = null;
         String url = "https://store-site-backend-static.ak.epicgames.com/freeGamesPromotions?locale=zh-CN&country=CN&allowCountries=CN";
@@ -41,49 +45,42 @@ public class EpicUtil {
                 jsonObject = (JSONObject) jsonObject.get("Catalog");
                 jsonObject = (JSONObject) jsonObject.get("searchStore");
                 JSONArray arrayList = JSON.parseArray(String.valueOf(jsonObject.get("elements")));
-                int i = 0;
-                for (Object object : arrayList) {
-                    String stringValue = JSON.toJSONString(object);
-                    List list1 = new ArrayList<Integer>();
-                    int datei = stringValue.indexOf("endDate");
-                    while (datei != -1) {
-                        list1.add(datei);
-                        datei = stringValue.indexOf("endDate", datei + 1);
-                    }
-                    List list2 = new ArrayList<Integer>();
-                    int datee = stringValue.indexOf("startDate");
-                    while (datee != -1) {
-                        list2.add(datee);
-                        datee = stringValue.indexOf("startDate", datee + 1);
-                    }
-                    if (list1.size() > 1) {
-                        int dindex = (int) list1.get(0);
-                        int dend = (int) list2.get(0);
-                        String dateString = stringValue.substring(dindex + 10, dend - 3);
-                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                        Date date = simpleDateFormat.parse(dateString);
-                        Date now = new Date();
-                        if (now.before(date)) {
-                            int index = stringValue.indexOf("title");
-                            int end = stringValue.indexOf("productSlug");
-                            if (end < 0) {
-                                end = stringValue.indexOf("tags");
+                Date now = new Date();
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+                AtomicInteger i = new AtomicInteger();
+                arrayList.forEach((item) -> {
+                    JSONObject element = (JSONObject) item;
+                    String title = (String) element.get("title");
+                    String description = (String) element.get("description");
+                    JSONObject imgUrl = (JSONObject) JSON.parseArray(String.valueOf(element.get("keyImages"))).get(0);
+                    String imgUrlString = (String) imgUrl.get("url");
+                    JSONObject object = (JSONObject) ((JSONObject) item).get("promotions");
+                    if (object != null) {
+                        JSONArray objectArray = (JSONArray) object.get("promotionalOffers");
+                        if (objectArray.size() > 0) {
+                            object = (JSONObject) objectArray.get(0);
+                            objectArray = (JSONArray) object.get("promotionalOffers");
+                            object = (JSONObject) objectArray.get(0);
+                            String endDate = (String) object.get("endDate");
+                            try {
+                                Date date = simpleDateFormat.parse(endDate);
+                                if (now.before(date)) {
+                                    Epic epic = new Epic();
+                                    epic.setTitle(title);
+                                    epic.setDes(description);
+                                    epic.setDate(endDate);
+                                    epic.setImgUrl(imgUrlString);
+                                    epicMap.put(String.valueOf(i.get()), epic);
+                                    i.getAndIncrement();
+                                }
+                            } catch (ParseException e) {
+                                throw new RuntimeException(e);
                             }
-                            String title = stringValue.substring(index + 8, end - 3);
-                            int desi = stringValue.indexOf("description");
-                            int dese = stringValue.indexOf("title");
-                            String des = stringValue.substring(desi + 14, dese - 3);
-                            Epic epic = new Epic();
-                            epic.setTitle(title);
-                            epic.setDes(des);
-                            epic.setDate(dateString);
-                            epicMap.put(String.valueOf(i),epic);
-                            i++;
                         }
                     }
-                }
+                });
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             return epicMap;
         }
         return epicMap;
