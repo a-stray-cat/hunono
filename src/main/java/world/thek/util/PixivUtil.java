@@ -13,7 +13,6 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import world.thek.config.ConfigData;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,14 +23,14 @@ import java.util.Random;
  * @date: 2022/9/27 下午3:11
  */
 public class PixivUtil {
-    private static String token = ConfigData.INSTANCE.getApiKey();
+    private static final String token = ConfigData.INSTANCE.getApiKey();
     static CloseableHttpClient httpClient = HttpClients.createDefault();
     static CloseableHttpResponse response = null;
-
+    
     /**
      * 根据作品ID获取图片
      */
-    public static HashMap<String, String> getImageById(int id) throws IOException {
+    public static HashMap<String, String> getImageById(int id) {
         String url = "https://api.acgmx.com/illusts/detail?illustId=" + id + "&reduction=true";
         HashMap<String, String> map = new HashMap<>();
         HttpGet request = new HttpGet(url);
@@ -44,13 +43,13 @@ public class PixivUtil {
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
                 HttpEntity httpEntity = response.getEntity();
                 String html = EntityUtils.toString(httpEntity, "utf-8");
-                List list1 = new ArrayList<Integer>();
+                List<Integer> list1 = new ArrayList<>();
                 int index = html.indexOf("large");
                 while (index != -1) {
                     list1.add(index);
                     index = html.indexOf("large", index + 1);
                 }
-                List list2 = new ArrayList<Integer>();
+                List<Integer> list2 = new ArrayList<>();
                 int end = html.indexOf("square_medium");
                 while (end != -1) {
                     list2.add(end);
@@ -66,8 +65,8 @@ public class PixivUtil {
                 map.put("title", title);
                 if (list1.size() > 1) {
                     for (int i = 1; i < list1.size(); i++) {
-                        int a = (int) list1.get(i);
-                        int b = (int) list2.get(i);
+                        int a = list1.get(i);
+                        int b = list2.get(i);
                         String img = html.substring(a + 8, b - 3);
                         int m = img.lastIndexOf("/") + 1;
                         String subId = img.substring(m, img.length() - 15);
@@ -76,8 +75,8 @@ public class PixivUtil {
                         map.put(subId, repUrl);
                     }
                 } else {
-                    index = (int) list1.get(0);
-                    end = (int) list2.get(0);
+                    index = list1.get(0);
+                    end = list2.get(0);
                     String img = html.substring(index + 8, end - 3);
                     int m = img.lastIndexOf("/") + 1;
                     String subId = img.substring(m, img.length() - 15);
@@ -108,13 +107,13 @@ public class PixivUtil {
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 HttpEntity httpEntity = response.getEntity();
                 String html = EntityUtils.toString(httpEntity, "utf-8");
-                List list1 = new ArrayList<Integer>();
+                List<Integer> list1 = new ArrayList<>();
                 int index = html.indexOf("large");
                 while (index != -1) {
                     list1.add(index);
                     index = html.indexOf("large", index + 1);
                 }
-                List list2 = new ArrayList<Integer>();
+                List<Integer> list2 = new ArrayList<>();
                 int end = html.indexOf("square_medium");
                 while (end != -1) {
                     list2.add(end);
@@ -122,8 +121,8 @@ public class PixivUtil {
                 }
                 int j = 0;
                 for (int i = 0; i < list1.size(); i++) {
-                    int a = (int) list1.get(i);
-                    int b = (int) list2.get(i);
+                    int a = list1.get(i);
+                    int b = list2.get(i);
                     String img = html.substring(a + 8, b - 3);
                     int m = img.lastIndexOf("/") + 1;
                     int n = img.lastIndexOf("_p");
@@ -147,7 +146,7 @@ public class PixivUtil {
     /**
      * 搜索功能
      */
-    public static String searchImage(String value) throws IOException {
+    public static String searchImage(String value) {
         String url = "https://api.acgmx.com/public/search?q=" + value + "&offset=10";
         String subId = String.valueOf(0);
         HttpGet request = new HttpGet(url);
@@ -167,10 +166,10 @@ public class PixivUtil {
                 String valueString = JSON.toJSONString(arrayList.get(indexArray));
                 int index = valueString.indexOf("large");
                 int end = valueString.indexOf("square_medium");
-                String substringUrl = valueString.substring(index+8, end-3);
+                String substringUrl = valueString.substring(index + 8, end - 3);
                 int subIndex = substringUrl.lastIndexOf("/");
-                int subEnd =  substringUrl.indexOf("_p0");
-                subId = substringUrl.substring(subIndex + 1,subEnd);
+                int subEnd = substringUrl.indexOf("_p0");
+                subId = substringUrl.substring(subIndex + 1, subEnd);
             }
         } catch (Exception e) {
             return subId;

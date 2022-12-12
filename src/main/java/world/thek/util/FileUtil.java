@@ -38,15 +38,15 @@ public class FileUtil {
      */
     public static void write(String filename, String key, String value) throws IOException {
         File folder = new File(ConfigData.INSTANCE.getPath());
-        if (!folder.exists() && !folder.isDirectory()) {
-            folder.mkdirs();
+        if (!folder.mkdirs()) {
+            if (!folder.isDirectory()) {
+                throw new IOException();
+            }
         }
         File file = new File(ConfigData.INSTANCE.getPath() + filename);
         if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (!file.createNewFile()) {
+                throw new IOException();
             }
         }
         BufferedWriter out = new BufferedWriter(new FileWriter(ConfigData.INSTANCE.getPath() + filename, true));
@@ -91,37 +91,42 @@ public class FileUtil {
     /**
      * 删除指令数据
      */
-    public static void deleteOrder(String filename) {
+    public static boolean deleteOrder(String filename) {
+        boolean result = true;
         File file = new File(ConfigData.INSTANCE.getPath() + filename);
         if (file.exists()) {
-            file.delete();
+            if (!file.delete()) {
+                result = false;
+            }
         }
         orderMap = new HashMap<>();
+        return result;
     }
 
     /**
      * 清除图片缓存
      */
-    public static boolean cleanCache(String filename) {
-        File file = new File(ConfigData.INSTANCE.getPath() + filename);
-        if (file.exists()) {
-            file.delete();
+    public static boolean cleanCache() {
+        boolean result = true;
+        File folder = new File(ConfigData.INSTANCE.getPath() + File.separator + "images");
+        if (folder.exists()) {
+            if (!folder.delete()) {
+                result = false;
+            }
         }
-        if (file.exists()) {
-            return false;
-        } else {
-            return true;
-        }
+        return result;
     }
 
     /**
      * 上传图片
      */
-    public static String uploadImage(String urlStr) {
+    public static String uploadImage(String urlStr) throws IOException {
 
         File folder = new File(ConfigData.INSTANCE.getPath() + File.separator + "images");
-        if (!folder.exists() && !folder.isDirectory()) {
-            folder.mkdirs();
+        if (!folder.mkdirs()) {
+            if (!folder.isDirectory()) {
+                throw new IOException();
+            }
         }
 
         String imgId = urlStr.substring(urlStr.length() - 27, urlStr.length() - 15);

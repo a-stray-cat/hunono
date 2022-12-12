@@ -1,5 +1,7 @@
 package world.thek.entity;
 
+import java.io.File;
+
 /**
  * @Author: thek
  * @Date: 2022/9/21 上午11:11
@@ -11,5 +13,6 @@ public class Order {
     public static final String ORDER_FIND = "查询指令";
     public static final String ORDER_ALL = "所有指令";
     public static final String ORDER_REMOVE = "删除指令";
+    public static final String ORDER_FILENAME = File.separator + "order.txt";
 
 }

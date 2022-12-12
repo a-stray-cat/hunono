@@ -7,7 +7,6 @@ import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import world.thek.config.ConfigData;
 import world.thek.entity.Order;
-import world.thek.util.ConstantUtil;
 import world.thek.util.FileUtil;
 
 import java.io.IOException;
@@ -15,7 +14,7 @@ import java.util.Map;
 
 /**
  * @author thek
- * @date:  2022/9/21 上午11:05
+ * @date: 2022/9/21 上午11:05
  */
 public class OrderController extends SimpleListenerHost {
 
@@ -26,7 +25,7 @@ public class OrderController extends SimpleListenerHost {
         String[] split = code.split("\\s+");
         String order = split[0];
 
-        Map<String,String> orderMap = FileUtil.read(ConstantUtil.ORDER_FILENAME);
+        Map<String, String> orderMap = FileUtil.read(Order.ORDER_FILENAME);
 
         //关键词触发
         if (orderMap.get(order) != null) {
@@ -42,8 +41,8 @@ public class OrderController extends SimpleListenerHost {
                 if (orderMap.get(key) != null) {
                     event.getSubject().sendMessage("指令已存在！");
                 } else {
-                    FileUtil.write(ConstantUtil.ORDER_FILENAME,key,value);
-                    event.getSubject().sendMessage("添加指令: "+key);
+                    FileUtil.write(Order.ORDER_FILENAME, key, value);
+                    event.getSubject().sendMessage("添加指令: " + key);
                 }
             } else {
                 MessageChainBuilder messages = new MessageChainBuilder();
@@ -51,7 +50,7 @@ public class OrderController extends SimpleListenerHost {
                 messages.append(String.valueOf(userId));
                 messages.append("\n");
                 messages.append("请联系管理员!");
-                MessageChain chain =  messages.build();
+                MessageChain chain = messages.build();
                 event.getSubject().sendMessage(chain);
             }
         }
@@ -61,9 +60,9 @@ public class OrderController extends SimpleListenerHost {
             String key = split[1];
             if (orderMap.get(key) != null) {
                 String value = orderMap.get(key);
-                event.getSubject().sendMessage(key+" "+value);
+                event.getSubject().sendMessage(key + " " + value);
             } else {
-                event.getSubject().sendMessage("不存在指令："+key);
+                event.getSubject().sendMessage("不存在指令：" + key);
             }
         }
 
@@ -73,11 +72,11 @@ public class OrderController extends SimpleListenerHost {
                 String key = split[1];
                 String value = split[2];
                 if (orderMap.get(key) != null) {
-                    FileUtil.remove(ConstantUtil.ORDER_FILENAME,key);
-                    FileUtil.write(ConstantUtil.ORDER_FILENAME,key,value);
-                    event.getSubject().sendMessage("修改成功："+key);
+                    FileUtil.remove(Order.ORDER_FILENAME, key);
+                    FileUtil.write(Order.ORDER_FILENAME, key, value);
+                    event.getSubject().sendMessage("修改成功：" + key);
                 } else {
-                    event.getSubject().sendMessage("不存在指令："+key);
+                    event.getSubject().sendMessage("不存在指令：" + key);
                 }
             } else {
                 MessageChainBuilder messages = new MessageChainBuilder();
@@ -85,17 +84,17 @@ public class OrderController extends SimpleListenerHost {
                 messages.append(String.valueOf(userId));
                 messages.append("\n");
                 messages.append("请联系管理员!");
-                MessageChain chain =  messages.build();
+                MessageChain chain = messages.build();
                 event.getSubject().sendMessage(chain);
             }
 
         }
 
         //所有指令
-        if(Order.ORDER_ALL.equals(order)) {
+        if (Order.ORDER_ALL.equals(order)) {
             if (userId == ConfigData.INSTANCE.getOwner()) {
-                MessageChainBuilder messages = FileUtil.findALL(ConstantUtil.ORDER_FILENAME);
-                MessageChain chain =  messages.build();
+                MessageChainBuilder messages = FileUtil.findALL(Order.ORDER_FILENAME);
+                MessageChain chain = messages.build();
                 event.getSubject().sendMessage(chain);
             } else {
                 MessageChainBuilder messages = new MessageChainBuilder();
@@ -103,7 +102,7 @@ public class OrderController extends SimpleListenerHost {
                 messages.append(String.valueOf(userId));
                 messages.append("\n");
                 messages.append("请联系管理员!");
-                MessageChain chain =  messages.build();
+                MessageChain chain = messages.build();
                 event.getSubject().sendMessage(chain);
             }
         }
@@ -113,10 +112,10 @@ public class OrderController extends SimpleListenerHost {
             if (userId == ConfigData.INSTANCE.getOwner()) {
                 String key = split[1];
                 if (orderMap.get(key) != null) {
-                    FileUtil.remove(ConstantUtil.ORDER_FILENAME,key);
-                    event.getSubject().sendMessage("已删除："+key);
+                    FileUtil.remove(Order.ORDER_FILENAME, key);
+                    event.getSubject().sendMessage("已删除：" + key);
                 } else {
-                    event.getSubject().sendMessage("不存在指令："+key);
+                    event.getSubject().sendMessage("不存在指令：" + key);
                 }
             } else {
                 MessageChainBuilder messages = new MessageChainBuilder();
@@ -124,7 +123,7 @@ public class OrderController extends SimpleListenerHost {
                 messages.append(String.valueOf(userId));
                 messages.append("\n");
                 messages.append("请联系管理员!");
-                MessageChain chain =  messages.build();
+                MessageChain chain = messages.build();
                 event.getSubject().sendMessage(chain);
             }
         }
@@ -132,15 +131,19 @@ public class OrderController extends SimpleListenerHost {
         //删除数据
         if (Order.ORDER_DELETE.equals(order)) {
             if (userId == ConfigData.INSTANCE.getOwner()) {
-                FileUtil.deleteOrder(ConstantUtil.ORDER_FILENAME);
-                event.getSubject().sendMessage("数据清除成功！");
+                if (FileUtil.deleteOrder(Order.ORDER_FILENAME)) {
+                    event.getSubject().sendMessage("数据清除成功！");
+                } else {
+                    event.getSubject().sendMessage("数据清除是失败，请尝试再次清除");
+                }
+
             } else {
                 MessageChainBuilder messages = new MessageChainBuilder();
                 messages.append("当前用户ID为：");
                 messages.append(String.valueOf(userId));
                 messages.append("\n");
                 messages.append("请联系管理员!");
-                MessageChain chain =  messages.build();
+                MessageChain chain = messages.build();
                 event.getSubject().sendMessage(chain);
             }
         }

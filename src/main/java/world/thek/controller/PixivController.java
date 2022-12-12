@@ -1,10 +1,14 @@
 package world.thek.controller;
 
+import net.mamoe.mirai.contact.Contact;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.MessageEvent;
 import net.mamoe.mirai.message.MessageReceipt;
-import net.mamoe.mirai.message.data.*;
+import net.mamoe.mirai.message.data.Image;
+import net.mamoe.mirai.message.data.MessageChain;
+import net.mamoe.mirai.message.data.MessageChainBuilder;
+import net.mamoe.mirai.message.data.PlainText;
 import net.mamoe.mirai.utils.ExternalResource;
 import world.thek.config.ConfigData;
 import world.thek.entity.Pixiv;
@@ -137,7 +141,7 @@ public class PixivController extends SimpleListenerHost {
 
         //查看关注列表
         if (Pixiv.PIXIV_FOLLOWING.equals(pixiv)) {
-            List list = ConfigData.INSTANCE.getFollowing();
+            List<Long> list = ConfigData.INSTANCE.getFollowing();
             MessageChainBuilder messages = new MessageChainBuilder();
             for (Object o : list) {
                 messages.append(String.valueOf(o));
@@ -178,7 +182,7 @@ public class PixivController extends SimpleListenerHost {
             if (subId > 0) {
                 findById(subId, event);
             } else {
-                if (ConfigData.INSTANCE.getApiKey() == "可前往https://www.acgmx.com获取") {
+                if (ConfigData.INSTANCE.getApiKey().equals("可前往https://www.acgmx.com获取")) {
                     event.getSubject().sendMessage("未配置API密钥，无法使用此功能！");
                 } else {
                     event.getSubject().sendMessage("搜索结果为空，请尝试重新搜索");
@@ -225,7 +229,7 @@ public class PixivController extends SimpleListenerHost {
                         Random r = new Random();
                         long time = r.nextInt(2000) + 3000;
                         chains.wait(time);
-                        MessageReceipt messageReceipt = event.getSubject().sendMessage(chains);
+                        MessageReceipt<Contact> messageReceipt = event.getSubject().sendMessage(chains);
                         if (ConfigData.INSTANCE.isRecallIn()) {
                             messageReceipt.recallIn(10000);
                         }
@@ -253,7 +257,7 @@ public class PixivController extends SimpleListenerHost {
                             Random r = new Random();
                             long time = r.nextInt(2000) + 3000;
                             chain.wait(time);
-                            MessageReceipt messageReceipt = event.getSubject().sendMessage(chain);
+                            MessageReceipt<Contact> messageReceipt = event.getSubject().sendMessage(chain);
                             if (ConfigData.INSTANCE.isRecallIn()) {
                                 messageReceipt.recallIn(10000);
                             }
