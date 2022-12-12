@@ -12,6 +12,7 @@ import world.thek.util.EpicUtil;
 import world.thek.util.FileUtil;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -21,7 +22,7 @@ import java.util.Map;
 public class EpicController extends SimpleListenerHost {
 
     @EventHandler
-    public void epic(MessageEvent event) {
+    public void epic(MessageEvent event) throws IOException {
         String code = event.getMessage().serializeToMiraiCode();
         String[] split = code.split("\\s+");
         String order = split[0];
