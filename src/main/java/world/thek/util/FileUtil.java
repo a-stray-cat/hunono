@@ -14,20 +14,20 @@ import java.util.Map;
  * @Date: 2022/9/21 上午11:06
  */
 public class FileUtil {
-    static Map<String,String> orderMap = new HashMap<>();
+    static Map<String, String> orderMap = new HashMap<>();
 
     /**
      * 获取指令
      */
-    public static Map<String,String> read(String filename) throws IOException {
+    public static Map<String, String> read(String filename) throws IOException {
 
-        File file = new File(ConfigData.INSTANCE.getPath()+filename);
+        File file = new File(ConfigData.INSTANCE.getPath() + filename);
         if (file.exists()) {
-            BufferedReader in = new BufferedReader(new FileReader(ConfigData.INSTANCE.getPath()+filename));
+            BufferedReader in = new BufferedReader(new FileReader(ConfigData.INSTANCE.getPath() + filename));
             String str;
             while ((str = in.readLine()) != null) {
                 String[] split = str.split("\\s+");
-                orderMap.put(split[0],split[1]);
+                orderMap.put(split[0], split[1]);
             }
         }
         return orderMap;
@@ -36,12 +36,12 @@ public class FileUtil {
     /**
      * 写入指令
      */
-    public static void write(String filename,String key,String value) throws IOException {
+    public static void write(String filename, String key, String value) throws IOException {
         File folder = new File(ConfigData.INSTANCE.getPath());
         if (!folder.exists() && !folder.isDirectory()) {
             folder.mkdirs();
         }
-        File file = new File(ConfigData.INSTANCE.getPath()+filename);
+        File file = new File(ConfigData.INSTANCE.getPath() + filename);
         if (!file.exists()) {
             try {
                 file.createNewFile();
@@ -49,8 +49,8 @@ public class FileUtil {
                 e.printStackTrace();
             }
         }
-        BufferedWriter out = new BufferedWriter(new FileWriter(ConfigData.INSTANCE.getPath()+filename,true));
-        out.write(key+" "+value+"\r");
+        BufferedWriter out = new BufferedWriter(new FileWriter(ConfigData.INSTANCE.getPath() + filename, true));
+        out.write(key + " " + value + "\r");
         out.close();
     }
 
@@ -62,7 +62,7 @@ public class FileUtil {
             read(filename);
         }
         MessageChainBuilder messages = new MessageChainBuilder();
-        for (Map.Entry<String,String> entry : orderMap.entrySet()) {
+        for (Map.Entry<String, String> entry : orderMap.entrySet()) {
             messages.append(entry.getKey());
             messages.append("->");
             messages.append(entry.getValue());
@@ -77,14 +77,14 @@ public class FileUtil {
     /**
      * 删除指令
      */
-    public static void remove(String filename,String key) throws IOException {
-        Map<String,String> newMap;
+    public static void remove(String filename, String key) throws IOException {
+        Map<String, String> newMap;
         orderMap.remove(key);
         newMap = orderMap;
-        BufferedWriter re = new BufferedWriter(new FileWriter(ConfigData.INSTANCE.getPath()+filename));
+        BufferedWriter re = new BufferedWriter(new FileWriter(ConfigData.INSTANCE.getPath() + filename));
         re.write("");
-        for (Map.Entry<String,String> entry : newMap.entrySet()) {
-            write(filename,entry.getKey(),entry.getValue());
+        for (Map.Entry<String, String> entry : newMap.entrySet()) {
+            write(filename, entry.getKey(), entry.getValue());
         }
     }
 
@@ -92,7 +92,7 @@ public class FileUtil {
      * 删除指令数据
      */
     public static void deleteOrder(String filename) {
-        File file = new File(ConfigData.INSTANCE.getPath()+filename);
+        File file = new File(ConfigData.INSTANCE.getPath() + filename);
         if (file.exists()) {
             file.delete();
         }
@@ -103,7 +103,7 @@ public class FileUtil {
      * 清除图片缓存
      */
     public static boolean cleanCache(String filename) {
-        File file = new File(ConfigData.INSTANCE.getPath()+filename);
+        File file = new File(ConfigData.INSTANCE.getPath() + filename);
         if (file.exists()) {
             file.delete();
         }
@@ -119,14 +119,14 @@ public class FileUtil {
      */
     public static String uploadImage(String urlStr) {
 
-        File folder = new File(ConfigData.INSTANCE.getPath()+"/images");
+        File folder = new File(ConfigData.INSTANCE.getPath() + File.separator + "images");
         if (!folder.exists() && !folder.isDirectory()) {
             folder.mkdirs();
         }
 
-        String imgId = urlStr.substring(urlStr.length()-27,urlStr.length()-15);
+        String imgId = urlStr.substring(urlStr.length() - 27, urlStr.length() - 15);
 
-        String jpgPath = ConfigData.INSTANCE.getPath() +"/images/" + imgId + ".jpg";
+        String jpgPath = ConfigData.INSTANCE.getPath() + File.separator + "images" + File.separator + imgId + ".jpg";
 
         File file = new File(jpgPath);
         if (!file.exists()) {
@@ -139,7 +139,7 @@ public class FileUtil {
                 FileOutputStream out = new FileOutputStream(jpgPath);
                 int data = 0;
                 while ((data = inputStream.read(bs)) != -1) {
-                    out.write(bs,0,data);
+                    out.write(bs, 0, data);
                 }
                 out.close();
                 inputStream.close();
